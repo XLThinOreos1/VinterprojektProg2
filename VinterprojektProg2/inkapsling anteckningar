@@ -1,0 +1,81 @@
+// Enemy.cs
+public class Enemy
+{
+    private int hp = 100;
+
+    public int GetHp()
+    {
+        return hp;
+    }
+
+    public int SetHp(int value)
+    {
+        hp = value;
+        if (hp < 0) hp = 0;
+    }
+
+    public void Hurt(int amount)
+    {
+        SetHp(GetHp() - amount);
+    }
+}
+
+
+// Program.cs
+Enemy e = new();
+
+e.Hurt(50);
+
+
+
+// Modernare sätt
+
+public class Enemy
+{
+
+    public string Name { get => name; set => nameof = value; }
+
+    private int _hp = 100;
+
+    public int Hp;
+
+    private int xp;
+
+    public int Level
+    {
+        get
+        {
+            return _xp / 10 + 1;
+        }
+        set
+        { // Lägger man till private innan set så får man bara läsa, inte ändra
+            // Tom = struntar i värdet som försöker sättas in
+        }
+    }
+
+    public int Hp
+    {
+        get
+        {
+            Console.WriteLine("GET!")
+            return Random.Shared.Next(100);
+            // return _hp;
+        }
+        set
+        {
+            _hp = value;
+            if (_hp < 0) _hp = 0;
+            if (_hp > 100) _hp = 100;
+        }
+    }
+}
+
+Enemy e = new();
+
+Console.WriteLine(e.Hp);
+
+e.Hp -= 50;
+e.Hp -= 50;
+e.Hp -= 50;
+
+Console.ReadLine();
