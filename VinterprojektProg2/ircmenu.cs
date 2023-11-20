@@ -1,15 +1,18 @@
-class GUI
+public class GUI
 {
-    void AskUser()
+    public static void AskUser()
     {
         Console.Clear();
         Console.Write("Enter name: ");
-        User u = new(Console.ReadLine());
+
+        Menu();
     }
 
-    void Menu()
+    static void Menu()
     {
-        Console.WriteLine(@"               IRC Channel");
+
+        Console.Clear();
+        Console.WriteLine(@"                <IRC Chat>");
         Console.WriteLine("---------------------------------------------");
     }
 }

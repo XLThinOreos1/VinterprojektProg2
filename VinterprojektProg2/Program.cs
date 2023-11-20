@@ -25,6 +25,8 @@ void Host()
     listener.Start();
     client = listener.AcceptTcpClient();
     nwStream = client.GetStream();
+
+    GUI.AskUser();
 }
 
 //connects to given ip
@@ -32,9 +34,20 @@ void Connect()
 {
     Console.WriteLine("Enter server IP");
     string SERVER_IP = Console.ReadLine();
+    // Behövs inte men gör converten från localhost till 127.0.0.1 snabbare än hur datorn själv räknar ut det
+    if (SERVER_IP == "localhost")
+    {
+        SERVER_IP = "127.0.0.1";
+    }
     client = new TcpClient(SERVER_IP, 5000);
     nwStream = client.GetStream();
+
+    GUI.AskUser();
 }
+
+User u = new(Console.ReadLine());
+
+Send("hello");
 
 while (true)
 {
@@ -54,10 +67,10 @@ void Receive()
     Console.WriteLine(dataReceived);
 }
 
-void Send()
+void Send(string UserMessage)
 {
     //Converts the string into bytes so that it can be sent
-    byte[] bytesToSend = System.Text.ASCIIEncoding.ASCII.GetBytes("hello");
+    byte[] bytesToSend = System.Text.ASCIIEncoding.ASCII.GetBytes($"{u.username}:");
     nwStream.Write(bytesToSend, 0, bytesToSend.Length);
 }
 
