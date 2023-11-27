@@ -10,6 +10,10 @@ public class thecode
     // Message har en public user 
     public User userexample;
 
+    int MessagePosition = 3;
+
+    Queue<string> messagehistory = new();
+
     //starts hosting and then wait for a client
     public void Host()
     {
@@ -45,8 +49,19 @@ public class thecode
         //Converts the string into bytes so that it can be sent
         byte[] bytesToSend = System.Text.Encoding.ASCII.GetBytes($"{userexample.username}: {UserMessage}");
         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+        QueueHandler();
+        messagehistory.Enqueue(UserMessage);
         Console.Write("\b");
+        Console.SetCursorPosition(0, MessagePosition);
+        if (MessagePosition < 13)
+        {
+            MessagePosition++;
+        }
         Console.WriteLine($"{userexample.username}: {UserMessage}");
+        foreach (string UserMessage in messagehistory)
+        {
+            Console.WriteLine($"{userexample.username}: {UserMessage}");
+        }
     }
 
     private void Receive()
@@ -57,7 +72,11 @@ public class thecode
 
         //convert the bytes received into a string
         string dataReceived = System.Text.Encoding.ASCII.GetString(buffer, 0, bytesRead);
-
+        Console.SetCursorPosition(0, MessagePosition);
+        if (MessagePosition < 13)
+        {
+            MessagePosition++;
+        }
         Console.WriteLine(dataReceived);
     }
 
@@ -68,6 +87,9 @@ public class thecode
             while (true)
             {
                 Send(Console.ReadLine());
+                Console.SetCursorPosition(2, 14);
+                Console.Write("                                                                        ");
+                Console.SetCursorPosition(2, 14);
             }
         });
 
@@ -76,6 +98,7 @@ public class thecode
             while (true)
             {
                 Receive();
+                Console.SetCursorPosition(2, 14);
             }
         });
 
@@ -85,5 +108,12 @@ public class thecode
         ReceiveT.IsBackground = true;
         ReceiveT.Start();
     }
-}
 
+    public void QueueHandler()
+    {
+        if (messagehistory.Count > 10)
+        {
+            messagehistory.Dequeue();
+        }
+    }
+}
