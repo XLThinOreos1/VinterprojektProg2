@@ -57,7 +57,12 @@ public class thecode
         {
             MessagePosition++;
         }
-        Console.WriteLine($"{userexample.username}: {UserMessage}");
+        // Console.WriteLine($"{userexample.username}: {UserMessage}");
+        MessageHistoryHandler();
+    }
+
+    private void MessageHistoryHandler()
+    {
         foreach (string UserMessage in messagehistory)
         {
             Console.WriteLine($"{userexample.username}: {UserMessage}");
