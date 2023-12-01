@@ -17,13 +17,4 @@ handler.MessageThread();
 
 bool ShouldWindowClose = false;
 
-while (!ShouldWindowClose)
-{
-    if (Console.ReadKey(true).Key == ConsoleKey.Escape)
-    {
-        ShouldWindowClose = true;
-    }
-    Console.WriteLine(Console.ReadKey(true).Key);
-}
-
-Console.ReadLine();
+while (!ShouldWindowClose) { }

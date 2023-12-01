@@ -10,8 +10,6 @@ public class thecode
     // Message har en public user 
     public User userexample;
 
-    int MessagePosition = 3;
-
     Queue<string> messagehistory = new();
 
     //starts hosting and then wait for a client
@@ -52,16 +50,12 @@ public class thecode
         QueueHandler();
         messagehistory.Enqueue(UserMessage);
         Console.Write("\b");
-        Console.SetCursorPosition(0, MessagePosition);
-        if (MessagePosition < 13)
-        {
-            MessagePosition++;
-        }
+        Console.SetCursorPosition(0, 3);
         // Console.WriteLine($"{userexample.username}: {UserMessage}");
-        MessageHistoryHandler();
+        MessageHistoryWriter();
     }
 
-    private void MessageHistoryHandler()
+    private void MessageHistoryWriter()
     {
         foreach (string UserMessage in messagehistory)
         {
@@ -77,12 +71,9 @@ public class thecode
 
         //convert the bytes received into a string
         string dataReceived = System.Text.Encoding.ASCII.GetString(buffer, 0, bytesRead);
-        Console.SetCursorPosition(0, MessagePosition);
-        if (MessagePosition < 13)
-        {
-            MessagePosition++;
-        }
-        Console.WriteLine(dataReceived);
+        Console.SetCursorPosition(0, 3);
+        messagehistory.Enqueue(dataReceived);
+        MessageHistoryWriter();
     }
 
     public void MessageThread()
