@@ -44,14 +44,19 @@ public class thecode
 
     private void Send(string UserMessage)
     {
+        if (UserMessage[0] == '/')
+        {
+            Commands.RunCommand(UserMessage, true);
+        }
+        // checka ifall första tecknet är /
         //Converts the string into bytes so that it can be sent
-        byte[] bytesToSend = System.Text.Encoding.ASCII.GetBytes($"{userexample.username}: {UserMessage}");
+        byte[] bytesToSend = System.Text.Encoding.UTF8.GetBytes($"{userexample.username}: {UserMessage}");
         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+        GUI.Menu();
         QueueHandler();
-        messagehistory.Enqueue(UserMessage);
+        messagehistory.Enqueue($"{userexample.username}: {UserMessage}");
         Console.Write("\b");
         Console.SetCursorPosition(0, 3);
-        // Console.WriteLine($"{userexample.username}: {UserMessage}");
         MessageHistoryWriter();
     }
 
@@ -59,7 +64,7 @@ public class thecode
     {
         foreach (string UserMessage in messagehistory)
         {
-            Console.WriteLine($"{userexample.username}: {UserMessage}");
+            Console.WriteLine($"{UserMessage}");
         }
     }
 
@@ -70,9 +75,12 @@ public class thecode
         int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
 
         //convert the bytes received into a string
-        string dataReceived = System.Text.Encoding.ASCII.GetString(buffer, 0, bytesRead);
-        Console.SetCursorPosition(0, 3);
+        string dataReceived = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
+        GUI.Menu();
+        QueueHandler();
         messagehistory.Enqueue(dataReceived);
+        Console.Write("\b");
+        Console.SetCursorPosition(0, 3);
         MessageHistoryWriter();
     }
 
@@ -107,7 +115,7 @@ public class thecode
 
     public void QueueHandler()
     {
-        if (messagehistory.Count > 10)
+        if (messagehistory.Count > 9)
         {
             messagehistory.Dequeue();
         }
