@@ -9,8 +9,9 @@ public class thecode
 
     // Message har en public user 
     public User userexample;
+    string OtherUsername;
 
-    Queue<string> messagehistory = new();
+    public static Queue<string> messagehistory = new();
 
     //starts hosting and then wait for a client
     public void Host()
@@ -24,6 +25,12 @@ public class thecode
         nwStream = client.GetStream();
 
         GUI.Menu();
+
+        byte[] buffer = new byte[client.ReceiveBufferSize];
+        int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
+        OtherUsername = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+        Send(userexample.username);
     }
 
     // connects to the given ip
@@ -40,17 +47,23 @@ public class thecode
         nwStream = client.GetStream();
 
         GUI.Menu();
+
+        Send(userexample.username);
+
+        byte[] buffer = new byte[client.ReceiveBufferSize];
+        int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
+        OtherUsername = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
     }
 
     private void Send(string UserMessage)
     {
+        // checka ifall första tecknet är /
         if (UserMessage[0] == '/')
         {
-            Commands.RunCommand(UserMessage, true);
+            Commands.RunCommand(UserMessage);
         }
-        // checka ifall första tecknet är /
         //Converts the string into bytes so that it can be sent
-        byte[] bytesToSend = System.Text.Encoding.UTF8.GetBytes($"{userexample.username}: {UserMessage}");
+        byte[] bytesToSend = System.Text.Encoding.UTF8.GetBytes(UserMessage);
         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
         GUI.Menu();
         QueueHandler();
@@ -76,9 +89,19 @@ public class thecode
 
         //convert the bytes received into a string
         string dataReceived = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
+        Console.WriteLine(dataReceived[0]);
+
+        if (dataReceived[0] == '/')
+        {
+            if (Commands.GlobalCommands.Contains(dataReceived))
+            {
+                Commands.RunCommand(dataReceived);
+            }
+        }
+
         GUI.Menu();
         QueueHandler();
-        messagehistory.Enqueue(dataReceived);
+        messagehistory.Enqueue($"{OtherUsername}: {dataReceived}");
         Console.Write("\b");
         Console.SetCursorPosition(0, 3);
         MessageHistoryWriter();

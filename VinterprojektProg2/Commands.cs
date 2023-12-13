@@ -2,24 +2,23 @@ using System.Diagnostics;
 
 public class Commands
 {
+    public static List<string> GlobalCommands = new() { "/clear" };
 
-    public static void RunCommand(string command, bool RunOnThisUser)
+    public static void RunCommand(string command)
     {
         if (command == "/clear")
         {
-            Console.Clear();
+            thecode.messagehistory.Clear();
+        }
+        else if (command == "/hacker")
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
         }
         else if (command == "/help")
         {
-            if (RunOnThisUser)
-            { }
-            var psi = new ProcessStartInfo("shutdown", "/s /t 0")
-            {
-                CreateNoWindow = true,
-                UseShellExecute = false
-            };
-            Process.Start(psi);
+            Console.SetCursorPosition(0, 16);
+            Console.WriteLine("/clear, /hacker, /help");
         }
-        // else if()
     }
+
 }

@@ -1,7 +1,6 @@
 ﻿thecode handler = new();
 Console.Write("Enter name: ");
-User u = new(Console.ReadLine());
-handler.userexample = u;
+handler.userexample = new(Console.ReadLine());
 
 Console.WriteLine("Host(0) or Client(1)?");
 
