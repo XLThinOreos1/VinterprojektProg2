@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 public class Commands
 {
     public static List<string> GlobalCommands = new() { "/clear" };
@@ -14,10 +12,9 @@ public class Commands
         {
             Console.ForegroundColor = ConsoleColor.Green;
         }
-        else if (command == "/help")
+        else if (command == "/default")
         {
-            Console.SetCursorPosition(0, 16);
-            Console.WriteLine("/clear, /hacker, /help");
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
 
