@@ -13,7 +13,3 @@ else
     handler.Connect();
 }
 handler.MessageThread();
-
-bool ShouldWindowClose = false;
-
-while (!ShouldWindowClose) { }

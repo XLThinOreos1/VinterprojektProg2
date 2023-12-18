@@ -9,10 +9,10 @@ public class NetworkCode
 
     // Message har en public user 
     public User userexample;
-    string OtherUsername;
+    private string OtherUsername;
 
     // Gör messagehistory till en queue
-    public static readonly Queue<string> messagehistory = new();
+    public static Queue<string> messagehistory = new();
 
     //börjar hosta och väntar sen på en client
     public void Host()
@@ -71,7 +71,7 @@ public class NetworkCode
         {
             Commands.RunCommand(UserMessage);
         }
-        //Converts the string into bytes so that it can be sent
+        // Gör om string till bytes så man kan skicka meddelandet till andra datorn
         byte[] bytesToSend = System.Text.Encoding.UTF8.GetBytes(UserMessage);
         nwStream.Write(bytesToSend, 0, bytesToSend.Length);
         GUI.Menu();
@@ -92,14 +92,22 @@ public class NetworkCode
 
     private void Receive()
     {
+        // Buffer är en array variabel som ska senare innehålla något
+        // Skapar en buffer variabel som är lika stor som mängden data som tas in
+        // Buffer behövs skapas eftersom nwStream.Read() måste lagra data nånstans.
         byte[] buffer = new byte[client.ReceiveBufferSize];
 
+        // Lagrar datan i buffer och sen mängden bytes som datan är.
+        // Läser av hela packet som den får in
         int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
 
-        //convert the bytes received into a string
+        // Gör om bytes som den får in till en string
         string dataReceived = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
-        Console.WriteLine(dataReceived[0]);
 
+        // Console.WriteLine(dataReceived[0]);
+
+        // Den checkar ifall första symbolen/bokstaven av meddelandet innehåller tecknet '/'
+        // Om den gör det så kommer den förstå att det är ett chat kommando och senare kör kommandet
         if (dataReceived[0] == '/')
         {
             if (Commands.GlobalCommands.Contains(dataReceived))
@@ -116,10 +124,13 @@ public class NetworkCode
         MessageHistoryWriter();
     }
 
+    // Funktion som kör igång två threads så båda personer kan skriva samtidigt och hindrar att det blir turn-based
     public void MessageThread()
     {
-        Thread SendT = new Thread(() =>
+        Thread SendT = new(() =>
         {
+            // Send väntar på användarens input och senare rensar raden där man skrev in något så det gamla
+            // meddelandet inte är kvar när man vill skriva något nytt
             while (true)
             {
                 Send(Console.ReadLine());
@@ -129,6 +140,7 @@ public class NetworkCode
             }
         });
 
+        // Kör receive och senare placerar cursor i skriv rutan
         Thread ReceiveT = new(() =>
         {
             while (true)
@@ -138,13 +150,14 @@ public class NetworkCode
             }
         });
 
-        SendT.IsBackground = true;
+        // Startar threads
         SendT.Start();
 
-        ReceiveT.IsBackground = true;
         ReceiveT.Start();
     }
 
+    // Hanterar chat historikens queue, om meddelanden är över 9 så tar den bort ett meddelande så den kan få plats
+    // med en ny meddelande på skärmen
     public static void QueueHandler()
     {
         if (messagehistory.Count > 9)
