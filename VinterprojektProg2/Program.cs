@@ -1,4 +1,4 @@
-﻿thecode handler = new();
+﻿NetworkCode handler = new();
 Console.Write("Enter name: ");
 handler.userexample = new(Console.ReadLine());
 

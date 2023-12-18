@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-public class thecode
+public class NetworkCode
 {
     TcpListener listener;
     TcpClient client;
@@ -11,31 +11,32 @@ public class thecode
     public User userexample;
     string OtherUsername;
 
-    public static Queue<string> messagehistory = new();
+    // Gör messagehistory till en queue
+    public static readonly Queue<string> messagehistory = new();
 
-    //starts hosting and then wait for a client
+    //börjar hosta och väntar sen på en client
     public void Host()
     {
-        // this starts listening for data being received on port 5000
-        // IPAddress.Any just means that its listening on all network interfaces, its basically just 0.0.0.0
+        // listener börjar lyssna på data som den får in på port 5000
+        // IPAddress.Any gör att den lyssnar på all inkommande trafik.
         listener = new TcpListener(IPAddress.Any, 5000);
         Console.WriteLine("waiting for client");
         listener.Start();
-        // listens for a client and saves it when it sees someone trying to connect to the computer on that port
+        // Lyssnar på en client och sparar den när den ser att någon försöker koppla sig till en port.
         client = listener.AcceptTcpClient();
-        // saves the client stream to use later. 
-        // the client stream is just all the data that is being received from the client
+        // Client stream är all inkommande data som den får in från client och senare sparar den för framtida användning.
         nwStream = client.GetStream();
 
         GUI.Menu();
 
-        // creates a buffer the size of the amount of data that is being received
-        // the buffer needs to be created because nwStream.Read() needs somewhere to store the data
+        // Buffer är en array variabel som ska senare innehålla något
+        // Skapar en buffer variabel som är lika stor som mängden data som tas in
+        // Buffer behövs skapas eftersom nwStream.Read() måste lagra data nånstans.
         byte[] buffer = new byte[client.ReceiveBufferSize];
-        // stores the data in buffer, 0 offset, amount of bytes that the data is. 
-        // it reads the entire received packet
+        // lagrar datan i buffer, 0 offset och sen mängden bytes som datan är.
+        // Läser av hela packet som den får in
         int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
-        // the received data is in bytes, convert it to utf8 characters. (bytes to convert, index to start at, number of bytes)
+        // Datan som den får in är i bytes så man gör om den till UTF8 karaktärer. (bytes to convert, index to start at, number of bytes)
         OtherUsername = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
         Send(userexample.username);
@@ -81,7 +82,7 @@ public class thecode
         MessageHistoryWriter();
     }
 
-    private void MessageHistoryWriter()
+    private static void MessageHistoryWriter()
     {
         foreach (string UserMessage in messagehistory)
         {
@@ -128,7 +129,7 @@ public class thecode
             }
         });
 
-        Thread ReceiveT = new Thread(() =>
+        Thread ReceiveT = new(() =>
         {
             while (true)
             {
@@ -144,7 +145,7 @@ public class thecode
         ReceiveT.Start();
     }
 
-    public void QueueHandler()
+    public static void QueueHandler()
     {
         if (messagehistory.Count > 9)
         {

@@ -6,7 +6,7 @@ public class Commands
     {
         if (command == "/clear")
         {
-            thecode.messagehistory.Clear();
+            NetworkCode.messagehistory.Clear();
         }
         else if (command == "/hacker")
         {
